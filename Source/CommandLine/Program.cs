@@ -14,7 +14,7 @@ namespace CommandLineTest {
 			bool printHelp = false;
 			List<string> names = new List<string>();
 			CommandLine commandLine = new CommandLine()
-				.AddString("name", "n", "name of someone to greet", true, l => names.Add(l))
+				.AddString("n", null, "<Name>", "name of someone to greet", true, l => names.Add(l))
 				.AddFlag("verbose", "v", "verbose debug output", false, v => verbose = v)
 				.AddFlag("help", "?", "print command usage", false, h => printHelp = h)
 			;

@@ -175,14 +175,14 @@ namespace CommandLineUnitTest {
 			string textM = null;
 			string textZ = null;
 			CommandLine commandLine = new CommandLine()
-				.AddString("a", null, "note", true, a => textA = a)
-				.AddString("c", null, "note", true, c => textC = c)
-				.AddString("e", null, "note", true, e => textE = e)
-				.AddString("g", null, "note", true, g => textG = g)
-				.AddString("i", null, "note", true, i => textI = i)
-				.AddString("k", null, "note", true, k => textK = k)
-				.AddString("m", null, "note", false, m => textM = m)
-				.AddString("z", null, "note", false, z => this.ShouldNotBeCalled())
+				.AddString("a", null, null, "note", true, a => textA = a)
+				.AddString("c", null, null, "note", true, c => textC = c)
+				.AddString("e", null, null, "note", true, e => textE = e)
+				.AddString("g", null, null, "note", true, g => textG = g)
+				.AddString("i", null, null, "note", true, i => textI = i)
+				.AddString("k", null, null, "note", true, k => textK = k)
+				.AddString("m", null, null, "note", false, m => textM = m)
+				.AddString("z", null, null, "note", false, z => this.ShouldNotBeCalled())
 			;
 			string errors = commandLine.Parse(args, l => Assert.AreEqual(0, l.Count()));
 			Assert.IsTrue(errors == null && textA == "b" && textC == "d" && textE == "f" && textG == "h" && textI == "j" && textK == "l" && textM == null && textZ == null);
@@ -192,8 +192,8 @@ namespace CommandLineUnitTest {
 		public void String2Test() {
 			string[] args = { "b=c" };
 			CommandLine commandLine = new CommandLine()
-				.AddString("a", null, "note", true, a => this.ShouldNotBeCalled())
-				.AddString("b", null, "note", false, b => { })
+				.AddString("a", null, null, "note", true, a => this.ShouldNotBeCalled())
+				.AddString("b", null, null, "note", false, b => { })
 			;
 			string errors = commandLine.Parse(args, l => this.ShouldNotBeCalled());
 			//"Required parameter a is missing"
@@ -204,7 +204,7 @@ namespace CommandLineUnitTest {
 		public void String3Test() {
 			string[] args = { "b" };
 			CommandLine commandLine = new CommandLine()
-				.AddString("b", null, "note", false, b => this.ShouldNotBeCalled())
+				.AddString("b", null, null, "note", false, b => this.ShouldNotBeCalled())
 			;
 			string errors = commandLine.Parse(args, l => this.ShouldNotBeCalled());
 			//"Parameter b is missing value"
@@ -215,7 +215,7 @@ namespace CommandLineUnitTest {
 		public void Unknow1Test() {
 			string[] args = { "b" };
 			CommandLine commandLine = new CommandLine()
-				.AddString("a", null, "note", false, a => this.ShouldNotBeCalled())
+				.AddString("a", null, null, "note", false, a => this.ShouldNotBeCalled())
 			;
 			string errors = commandLine.Parse(args, null);
 			//"Unrecognized parameter: b"
@@ -228,7 +228,7 @@ namespace CommandLineUnitTest {
 			string[] expected = { "a", "b", "c", "d", "g", "i" };
 			List<string> list = new List<string>();
 			CommandLine commandLine = new CommandLine()
-				.AddString("f", null, "note", true, l => list.Add(l))
+				.AddString("f", null, null, "note", true, l => list.Add(l))
 			;
 			string errors = commandLine.Parse(args, null);
 			Assert.IsTrue(errors == null && list != null && list.Count() == expected.Length && expected.All(s => list.Contains(s)));
@@ -259,12 +259,12 @@ namespace CommandLineUnitTest {
 
 		[TestMethod]
 		public void Help1Test() {
-			string[] expected = { "flag", "hello", "green", "cool", "note", "red", "world", "logo" };
+			string[] expected = { "flag", "say", "hello", "green", "cool", "aid", "note", "red", "world", "color", "logo" };
 
 			CommandLine commandLine = new CommandLine()
-				.AddString("flag", null, "hello", true, a => this.ShouldNotBeCalled())
-				.AddString("green", "cool", "note", true, a => this.ShouldNotBeCalled())
-				.AddString("red", "world", "logo", false, a => this.ShouldNotBeCalled())
+				.AddString("flag", null, "say", "hello", true, a => this.ShouldNotBeCalled())
+				.AddString("green", "cool", "aid", "note", true, a => this.ShouldNotBeCalled())
+				.AddString("red", "world", "color", "logo", false, a => this.ShouldNotBeCalled())
 			;
 			string help = commandLine.Help();
 			Assert.IsTrue(expected.All(s => help.Contains(s)));
