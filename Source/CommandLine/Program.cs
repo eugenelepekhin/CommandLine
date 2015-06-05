@@ -13,8 +13,10 @@ namespace CommandLineTest {
 			bool verbose = false;
 			bool printHelp = false;
 			List<string> names = new List<string>();
+			int count = 1;
 			CommandLine commandLine = new CommandLine()
 				.AddString("n", null, "<Name>", "name of someone to greet", true, l => names.Add(l))
+				.AddInt("count", "c", "<Count>", "number of times to repeat greetings", false, 1, 10, i => count = i)
 				.AddFlag("verbose", "v", "verbose debug output", false, v => verbose = v)
 				.AddFlag("help", "?", "print command usage", false, h => printHelp = h)
 			;
@@ -29,7 +31,7 @@ namespace CommandLineTest {
 				Console.WriteLine("For more information run {0} /?", appName);
 				return;
 			}
-			Greet(verbose, names);
+			Greet(verbose, names, count);
 		}
 
 		private static void Usage(string help) {
@@ -42,12 +44,14 @@ namespace CommandLineTest {
 			Console.WriteLine(help);
 		}
 
-		private static void Greet(bool verbose, IEnumerable<string> names) {
+		private static void Greet(bool verbose, IEnumerable<string> names, int count) {
 			if(verbose) {
-				Console.WriteLine("Printing greetings for {0} persons in verbose mode", names.Count());
+				Console.WriteLine("Printing greetings for {0} persons in verbose mode, repeating {1} time{2}", names.Count(), count, (1 < count) ? "s" : string.Empty);
 			}
 			foreach(string name in names) {
-				Console.WriteLine("Hello {0}", name);
+				for(int i = 0; i < count; i++) {
+					Console.WriteLine("Hello {0}", name);
+				}
 			}
 		}
 	}

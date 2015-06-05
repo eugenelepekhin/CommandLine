@@ -212,6 +212,62 @@ namespace CommandLineUnitTest {
 		}
 
 		[TestMethod]
+		public void Int1Test() {
+			string[] args = { "/a", "4", "b=6", "-c:-7", "-d", "+15", "/e=0", "-f", int.MinValue.ToString(), "/g:" + int.MaxValue.ToString() };
+			int a = 0;
+			int b = 0;
+			int c = 0;
+			int d = 0;
+			int e = 100;
+			int f = 0;
+			int g = 0;
+			CommandLine commandLine = new CommandLine()
+				.AddInt("a", null, "a", "a", true, 1, 10, i => a = i)
+				.AddInt("b", null, "b", "b", true, 1, 10, i => b = i)
+				.AddInt("c", null, "c", "c", true, -10, 10, i => c = i)
+				.AddInt("d", null, "d", "d", true, 1, 100, i => d = i)
+				.AddInt("e", null, "e", "e", true, 0, 10, i => e = i)
+				.AddInt("f", null, "f", "f", true, i => f = i)
+				.AddInt("g", null, "g", "g", true, i => g = i)
+			;
+			string errors = commandLine.Parse(args, l => Assert.AreEqual(0, l.Count()));
+			Assert.IsTrue(errors == null && a == 4 && b == 6 && c == -7 && d == 15 && e == 0 & f == int.MinValue && g == int.MaxValue);
+		}
+
+		[TestMethod]
+		public void Int2NotNumberTest() {
+			string[] args = { "/aaa", "bbb" };
+			CommandLine commandLine = new CommandLine()
+				.AddInt("aaa", null, "aaa", "aaa", true, 1, 10, i => this.ShouldNotBeCalled())
+			;
+			string errors = commandLine.Parse(args, l => this.ShouldNotBeCalled());
+			StringAssert.Contains(errors, "aaa");
+			StringAssert.Contains(errors, "bbb");
+		}
+
+		[TestMethod]
+		public void Int3NotInRangeTest() {
+			string[] args = { "/aaa", "4" };
+			CommandLine commandLine = new CommandLine()
+				.AddInt("aaa", null, "aaa", "aaa", true, 10, 100, i => this.ShouldNotBeCalled())
+			;
+			string errors = commandLine.Parse(args, l => this.ShouldNotBeCalled());
+			StringAssert.Contains(errors, "aaa");
+			StringAssert.Contains(errors, "4");
+		}
+
+		[TestMethod]
+		public void Int4NotInRangeTest() {
+			string[] args = { "/aaa", "400" };
+			CommandLine commandLine = new CommandLine()
+				.AddInt("aaa", null, "aaa", "aaa", true, 10, 100, i => this.ShouldNotBeCalled())
+			;
+			string errors = commandLine.Parse(args, l => this.ShouldNotBeCalled());
+			StringAssert.Contains(errors, "aaa");
+			StringAssert.Contains(errors, "400");
+		}
+
+		[TestMethod]
 		public void Unknow1Test() {
 			string[] args = { "b" };
 			CommandLine commandLine = new CommandLine()
