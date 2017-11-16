@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CommandLineParser;
 
@@ -9,6 +10,7 @@ namespace CommandLineTest {
 		// /?
 		// /n Mercury Venus Mars
 		// /v /n Mercury Venus Mars "Planets of the Solar system"
+		[SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters")]
 		static void Main(string[] args) {
 			bool verbose = false;
 			bool printHelp = false;
@@ -34,6 +36,7 @@ namespace CommandLineTest {
 			Greet(verbose, names, count);
 		}
 
+		[SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters")]
 		private static void Usage(string help) {
 			string appName = Process.GetCurrentProcess().ProcessName;
 			Console.WriteLine("{0} - greeting application", appName);
@@ -44,6 +47,7 @@ namespace CommandLineTest {
 			Console.WriteLine(help);
 		}
 
+		[SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters")]
 		private static void Greet(bool verbose, IEnumerable<string> names, int count) {
 			if(verbose) {
 				Console.WriteLine("Printing greetings for {0} persons in verbose mode, repeating {1} time{2}", names.Count(), count, (1 < count) ? "s" : string.Empty);
