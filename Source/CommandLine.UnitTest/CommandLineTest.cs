@@ -212,6 +212,58 @@ namespace CommandLineUnitTest {
 		}
 
 		[TestMethod]
+		public void StringSingleNamedPath() {
+			string[] args = { @"/path", @"c:\folder\file.txt" };
+			string actual = null;
+			CommandLine commandLine = new CommandLine()
+				.AddString("path", null, "path", "note", true, s => { Assert.IsNull(actual); actual = s; })
+			;
+			string errors = commandLine.Parse(args, l => Assert.AreEqual(0, l.Count()));
+			Assert.IsNull(errors);
+			Assert.AreEqual(args[1], actual);
+		}
+
+		[TestMethod]
+		public void StringMultipleNamedPath() {
+			string[] args = {
+				@"/path", @"c:\folder\file1.txt",
+				@"/path", @"c:\folder\file2.txt",
+				@"/path", @"c:\folder\file3.txt",
+			};
+			int index = 0;
+			CommandLine commandLine = new CommandLine()
+				.AddString("path", null, "path", "note", true, s => { Assert.AreEqual(args[index * 2 + 1], s); index++; })
+			;
+			string errors = commandLine.Parse(args, l => Assert.AreEqual(0, l.Count()));
+			Assert.IsNull(errors);
+			Assert.AreEqual(args.Length / 2, index);
+		}
+
+		[TestMethod]
+		public void StringSingleUnmatchedPath() {
+			string[] args = { @"c:\folder\file.txt" };
+			CommandLine commandLine = new CommandLine()
+				.AddFlag("dummy", null, "note", false, b => this.ShouldNotBeCalled())
+			;
+			string errors = commandLine.Parse(args, l => Assert.IsTrue(1 == l.Count() && args[0] == l.First()));
+			Assert.IsNull(errors);
+		}
+
+		[TestMethod]
+		public void StringMultipleUnmatchedPath() {
+			string[] args = {
+				@"c:\folder\file1.txt",
+				@"c:\folder\file2.txt",
+				@"c:\folder\file3.txt",
+			};
+			CommandLine commandLine = new CommandLine()
+				.AddFlag("dummy", null, "note", false, b => this.ShouldNotBeCalled())
+			;
+			string errors = commandLine.Parse(args, list => Assert.IsTrue(args.Length == list.Count() && list.All(s => args.Contains(s))));
+			Assert.IsNull(errors);
+		}
+
+		[TestMethod]
 		public void Int1Test() {
 			string[] args = { "/a", "4", "b=6", "-c:-7", "-d", "+15", "/e=0", "-f", int.MinValue.ToString(), "/g:" + int.MaxValue.ToString() };
 			int a = 0;

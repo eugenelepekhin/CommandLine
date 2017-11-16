@@ -104,16 +104,16 @@ namespace CommandLineParser {
 					string text = Parameter.Trim(args[i]);
 					Match match = regex.Match(text);
 					if(match.Success) {
-						bool separatorIsEmpty = (Parameter.Trim(match.Groups["separator"].Value).Length == 0);
 						Parameter parameter = this.parameterList.Find(Parameter.Trim(match.Groups["name"].Value));
 						if(parameter == null) {
-							if(separatorIsEmpty && Parameter.Trim(match.Groups["prefix"].Value).Length == 0) {
+							if(Parameter.Trim(match.Groups["prefix"].Value).Length == 0) {
 								unmatched.Add(text);
 							} else {
 								errors.Add(string.Format(CultureInfo.InvariantCulture, "Unknown parameter: {0}", text));
 								break;
 							}
 						} else {
+							bool separatorIsEmpty = (Parameter.Trim(match.Groups["separator"].Value).Length == 0);
 							string value = Parameter.Trim(match.Groups["value"].Value);
 							if(separatorIsEmpty && value.Length == 0 && parameter.ExpectValue()) {
 								if(i + 1 < args.Length) {
