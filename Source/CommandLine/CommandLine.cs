@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace CommandLineParser {
 	/// Inspired by Mono.Options but simpler and easier to use.
 	/// </summary>
 	internal class CommandLine {
-		private ParameterList parameterList = new ParameterList();
+		private readonly ParameterList parameterList = new ParameterList();
 
 		#if HaveFlagParam
 			/// <summary>
@@ -155,8 +156,8 @@ namespace CommandLineParser {
 		/// <returns>Constructed help string</returns>
 		public string Help() {
 			this.parameterList.EnsureDefined();
-			Func<Parameter, string> value = parameter => parameter.Value != null ? " " + parameter.Value : string.Empty;
-			Func<Parameter, string> format = parameter =>
+			string value(Parameter parameter) => parameter.Value != null ? " " + parameter.Value : string.Empty;
+			string format(Parameter parameter) =>
 				(parameter.Alias == null)
 				? string.Format(CultureInfo.InvariantCulture, "/{0}{1}", parameter.Name, value(parameter))
 				: string.Format(CultureInfo.InvariantCulture, "/{0} -{1}{2}", parameter.Alias, parameter.Name, value(parameter))
@@ -208,6 +209,7 @@ namespace CommandLineParser {
 		}
 
 		private sealed class ParameterList : List<Parameter> {
+			[SuppressMessage("Microsoft.Globalization", "CA1303:DoNotPassLiteralsAsLocalizedParameters")]
 			public void EnsureDefined() {
 				if(0 == this.Count) {
 					throw new InvalidOperationException("Command line parameters are not defined");
@@ -255,7 +257,7 @@ namespace CommandLineParser {
 				}
 
 				public override string SetValue(string value) {
-					bool flag = false;
+					bool flag;
 					if(string.IsNullOrWhiteSpace(value)) {
 						flag = true;
 					} else {
@@ -300,8 +302,8 @@ namespace CommandLineParser {
 
 		#if HaveIntParam
 			private sealed class ParameterInt : Parameter<int> {
-				private int min;
-				private int max;
+				private readonly int min;
+				private readonly int max;
 
 				public ParameterInt(string name, string alias, string value, string note, bool required, int min, int max, Action<int> assign) : base(name, alias, value, note, required, assign) {
 					Debug.Assert(min < max, "min should be less than max for integer parameter.");
@@ -310,8 +312,7 @@ namespace CommandLineParser {
 				}
 
 				public override string SetValue(string value) {
-					int parsedValue;
-					if(int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out parsedValue)) {
+					if(int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsedValue)) {
 						if(this.min <= parsedValue && parsedValue <= this.max) {
 							return this.AssignValue(parsedValue);
 						}
