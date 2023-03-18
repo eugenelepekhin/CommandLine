@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using CommandLineParser;
+using System.Runtime.CompilerServices;
 
-namespace CommandLineTest {
-	class Program {
+[assembly: InternalsVisibleTo("CommandLine.UnitTest")]
+
+namespace CommandLineSample {
+	internal class Program {
 		// /?
 		// /n Mercury Venus Mars
 		// /v /n Mercury Venus Mars "Planets of the Solar system"
@@ -22,7 +22,7 @@ namespace CommandLineTest {
 				.AddFlag("verbose", "v", "verbose debug output", false, v => verbose = v)
 				.AddFlag("help", "?", "print command usage", false, h => printHelp = h)
 			;
-			string error = commandLine.Parse(args, l => names.AddRange(l));
+			string? error = commandLine.Parse(args, l => names.AddRange(l));
 			if(printHelp) {
 				Usage(commandLine.Help());
 				return;
