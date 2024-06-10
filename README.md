@@ -2,9 +2,9 @@
 
 Easy to use command line parser.
 
-To use just copy [file](Source/CommandLine/CommandLine.cs) to your project.
+To use just copy file [CommandLine.cs](Source/CommandLine/CommandLine.cs) to your project.
 Then create a parser and call Parse method with array of arguments. Check the returned error string. If it's null there is no errors.
-Here is the sample [code](Source/CommandLine/Program.cs):
+Here is the [sample code](Source/CommandLine/Program.cs):
 
 ```
 namespace CommandLineSample {
