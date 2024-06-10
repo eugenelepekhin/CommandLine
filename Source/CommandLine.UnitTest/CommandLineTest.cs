@@ -410,6 +410,24 @@ namespace CommandLineUnitTest {
 		}
 
 		[TestMethod]
+		public void Enum5UndefinedValue() {
+			string[] args1 = { "/v", "ddd" };
+			TestEnum value = TestEnum.Test;
+
+			CommandLine commandLine = new CommandLine()
+				.AddEnum<TestEnum>("v", null, "<v>", "vvv", true, [
+					new(TestEnum.Hello, "Hello", "a", " - Test of Hello"),
+					new(TestEnum.World, "World", "b", " - Test of World"),
+					new(TestEnum.Test, "Test", "c", " - Test of Test"), // name redefined
+				], "VVV", v => value = v)
+			;
+
+			string? errors = commandLine.Parse(args1, l => Assert.AreEqual(0, l.Count()));
+			Debug.WriteLine(errors);
+			StringAssert.Contains(errors, "ddd"); // ddd undefined
+		}
+
+		[TestMethod]
 		public void Unknow1Test() {
 			string[] args = { "b" };
 			CommandLine commandLine = new CommandLine()
