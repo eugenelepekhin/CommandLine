@@ -87,10 +87,26 @@ namespace CommandLineParser {
 		#endif
 
 		#if HaveEnumParam
+			/// <summary>
+			/// Provides information about each enum value.
+			/// </summary>
+			/// <typeparam name="T"></typeparam>
 			public readonly struct EnumDescriptor<T> where T:struct {
+				/// <summary>
+				/// Enum value
+				/// </summary>
 				public readonly T Value;
+				/// <summary>
+				/// Full name of the enum value
+				/// </summary>
 				public readonly string Name;
+				/// <summary>
+				/// Short name of the enum value
+				/// </summary>
 				public readonly string? Alias;
+				/// <summary>
+				/// Help text describing the value.
+				/// </summary>
 				public readonly string? Help;
 
 				public EnumDescriptor(T value, string name, string? alias, string? help) {
@@ -101,6 +117,19 @@ namespace CommandLineParser {
 				}
 			}
 
+			/// <summary>
+			/// Defines enum parameter allowing parameter of any c# enum
+			/// </summary>
+			/// <typeparam name="T">Enum type</typeparam>
+			/// <param name="name">Full name of the parameter</param>
+			/// <param name="alias">Short name of the parameter</param>
+			/// <param name="value">Help text that will represent the value passed to the parameter</param>
+			/// <param name="note">Help text of the parameter</param>
+			/// <param name="required">True if the parameter is mandatory</param>
+			/// <param name="values">Array of <see cref="EnumDescriptor"/></param>
+			/// <param name="extraHelpTitle">Help text the will precede list of possible values.</param>
+			/// <param name="assign">Method to assign int parameter back to the application variable</param>
+			/// <returns>Returns this reference</returns>
 			public CommandLine AddEnum<T>(string name, string? alias, string? value, string note, bool required, EnumDescriptor<T>[] values, string? extraHelpTitle, Action<T> assign) where T:struct {
 				this.parameterList.Add(new ParameterEnum<T>(name, alias, value, note, required, values, extraHelpTitle, assign));
 				return this;
