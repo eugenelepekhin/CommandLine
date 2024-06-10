@@ -1,4 +1,5 @@
-﻿using CommandLineParser;
+﻿using System.Diagnostics;
+using CommandLineParser;
 
 namespace CommandLineUnitTest {
 	[TestClass]
@@ -313,6 +314,99 @@ namespace CommandLineUnitTest {
 			string? errors = commandLine.Parse(args, l => this.ShouldNotBeCalled());
 			StringAssert.Contains(errors, "aaa");
 			StringAssert.Contains(errors, "400");
+		}
+
+		private enum TestEnum {
+			Hello,
+			World,
+			Test
+		}
+
+		[TestMethod]
+		public void Enum1Test() {
+			string[] args1 = { "/v", "a" };
+			string[] args2 = { "-v", "b" };
+			string[] args3 = { "-v", "c" };
+			string[] args4 = { "-v", "hello" };
+			string[] args5 = { "-v", "WORLD" };
+			string[] args6 = { "-v", "tESt" };
+
+			TestEnum value = TestEnum.Test;
+
+			CommandLine commandLine = new CommandLine()
+				.AddEnum<TestEnum>("v", null, "<v>", "vvv", true, [
+					new(TestEnum.Hello, "Hello", "a", " - Test of Hello"),
+					new(TestEnum.World, "World", "b", " - Test of World"),
+					new(TestEnum.Test, "Test", "c", " - Test of Test"),
+				], "VVV", v => value = v)
+			;
+
+			string? errors = commandLine.Parse(args1, l => Assert.AreEqual(0, l.Count()));
+			Assert.IsTrue(errors == null && value == TestEnum.Hello);
+
+			errors = commandLine.Parse(args2, l => Assert.AreEqual(0, l.Count()));
+			Assert.IsTrue(errors == null && value == TestEnum.World);
+
+			errors = commandLine.Parse(args3, l => Assert.AreEqual(0, l.Count()));
+			Assert.IsTrue(errors == null && value == TestEnum.Test);
+
+			errors = commandLine.Parse(args4, l => Assert.AreEqual(0, l.Count()));
+			Assert.IsTrue(errors == null && value == TestEnum.Hello);
+
+			errors = commandLine.Parse(args5, l => Assert.AreEqual(0, l.Count()));
+			Assert.IsTrue(errors == null && value == TestEnum.World);
+
+			errors = commandLine.Parse(args6, l => Assert.AreEqual(0, l.Count()));
+			Assert.IsTrue(errors == null && value == TestEnum.Test);
+
+			string help = commandLine.Help();
+			Debug.WriteLine(help);
+			StringAssert.Contains(help, "VVV"); // Extra title 
+			StringAssert.Contains(help, "Test of Hello");
+			StringAssert.Contains(help, "Test of World");
+			StringAssert.Contains(help, "Test of Test");
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentException))]
+		public void Enum2ValueRedefined() {
+			TestEnum value = TestEnum.Test;
+
+			CommandLine commandLine = new CommandLine()
+				.AddEnum<TestEnum>("v", null, "<v>", "vvv", true, [
+					new(TestEnum.Hello, "Hello", "a", " - Test of Hello"),
+					new(TestEnum.World, "World", "b", " - Test of World"),
+					new(TestEnum.Hello, "Test", "c", " - Test of Test"), // value redefined
+				], "VVV", v => value = v)
+			;
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentException))]
+		public void Enum3NameRedefined() {
+			TestEnum value = TestEnum.Test;
+
+			CommandLine commandLine = new CommandLine()
+				.AddEnum<TestEnum>("v", null, "<v>", "vvv", true, [
+					new(TestEnum.Hello, "Hello", "a", " - Test of Hello"),
+					new(TestEnum.World, "World", "b", " - Test of World"),
+					new(TestEnum.Test, "Hello", "c", " - Test of Test"), // name redefined
+				], "VVV", v => value = v)
+			;
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentException))]
+		public void Enum4AliasRedefined() {
+			TestEnum value = TestEnum.Test;
+
+			CommandLine commandLine = new CommandLine()
+				.AddEnum<TestEnum>("v", null, "<v>", "vvv", true, [
+					new(TestEnum.Hello, "Hello", "a", " - Test of Hello"),
+					new(TestEnum.World, "World", "b", " - Test of World"),
+					new(TestEnum.Test, "Test", "a", " - Test of Test"), // alias redefined
+				], "VVV", v => value = v)
+			;
 		}
 
 		[TestMethod]

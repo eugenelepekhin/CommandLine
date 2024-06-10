@@ -48,9 +48,9 @@ namespace CommandLineSample {
 		}
 
 		[SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters")]
-		private static void Greet(bool verbose, IEnumerable<string> names, int count) {
+		private static void Greet(bool verbose, List<string> names, int count) {
 			if(verbose) {
-				Console.WriteLine("Printing greetings for {0} persons in verbose mode, repeating {1} time{2}", names.Count(), count, (1 < count) ? "s" : string.Empty);
+				Console.WriteLine("Printing greetings for {0} persons in verbose mode, repeating {1} time{2}", names.Count, count, (1 < count) ? "s" : string.Empty);
 			}
 			foreach(string name in names) {
 				for(int i = 0; i < count; i++) {
