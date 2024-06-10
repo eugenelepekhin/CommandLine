@@ -1,7 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using CommandLineParser;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using CommandLineParser;
 
 [assembly: InternalsVisibleTo("CommandLine.UnitTest")]
 
